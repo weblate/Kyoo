@@ -22,6 +22,7 @@
 		"@radix-ui/react-select": "^2.0.0",
 		"@tanstack/react-query": "^5.12.1",
 		"@tanstack/react-query-devtools": "^5.12.2",
+		"@tanstack/react-virtual": "^3.0.1",
 		"array-shuffle": "^3.0.0",
 		"expo-linear-gradient": "^12.5.0",
 		"expo-modules-core": "^1.5.12",

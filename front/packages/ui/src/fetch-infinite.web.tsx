@@ -33,22 +33,23 @@ import {
 import { Stylable, nativeStyleToCss, useYoshiki, ysMap } from "yoshiki";
 import { EmptyView, ErrorView, Layout, WithLoading, addHeader } from "./fetch";
 import type { ContentStyle } from "@shopify/flash-list";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
-const InfiniteScroll = <Props,>({
-	children,
-	loader,
+const InfiniteScroll = <T extends { id: string }, Props>({
+	data,
+	renderItem,
 	layout,
 	loadMore,
-	hasMore = true,
+	hasMore,
 	isFetching,
 	Header,
 	headerProps,
-	fetchMore = true,
 	contentContainerStyle,
+	getItemSize,
 	...props
 }: {
-	children?: ReactElement | (ReactElement | null)[] | null;
-	loader?: (ReactElement | null)[];
+	data: T[];
+	renderItem: (item: T, index: number) => ReactElement;
 	layout: Layout;
 	loadMore: () => void;
 	hasMore: boolean;
@@ -57,12 +58,21 @@ const InfiniteScroll = <Props,>({
 	headerProps?: Props;
 	fetchMore?: boolean;
 	contentContainerStyle?: ContentStyle;
+	getItemSize: (x: T, idx: number) => number;
 } & Stylable) => {
 	const ref = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const virtualizer = useVirtualizer({
+		getScrollElement: () => ref.current,
+		horizontal: layout.layout === "horizontal",
+		count: data.length + +hasMore,
+		estimateSize: (i) => (i === data.length ? 0 : getItemSize(data[i], i)),
+		overscan: 5,
+	});
 	const { css } = useYoshiki();
 
 	const onScroll = useCallback(() => {
-		if (!ref.current || !hasMore || isFetching || !fetchMore) return;
+		if (!ref.current || !hasMore || isFetching) return;
 		const scroll =
 			layout.layout === "horizontal"
 				? ref.current.scrollWidth - ref.current.scrollLeft
@@ -72,7 +82,7 @@ const InfiniteScroll = <Props,>({
 
 		// Load more if less than 3 element's worth of scroll is left
 		if (scroll <= offset * 3) loadMore();
-	}, [hasMore, isFetching, layout, loadMore, fetchMore]);
+	}, [hasMore, isFetching, layout, loadMore]);
 	const scrollProps = { ref, onScroll };
 
 	// Automatically trigger a scroll check on start and after a fetch end in case the user is already
@@ -87,6 +97,7 @@ const InfiniteScroll = <Props,>({
 				[
 					{
 						display: "grid",
+						height: `${virtualizer.getTotalSize()}px`,
 						gridAutoRows: "max-content",
 						// the as any is due to differencies between css types of native and web (already accounted for in yoshiki)
 						gridGap: layout.gap as any,
@@ -118,8 +129,20 @@ const InfiniteScroll = <Props,>({
 				nativeStyleToCss(props),
 			)}
 		>
-			{children}
-			{isFetching && loader}
+			{virtualizer.getVirtualItems().map((x) => (
+				<div
+					key={data[x.index].id}
+					style={{
+						position: "absolute",
+						top: 0,
+						left: 0,
+						height: `${x.size}px`,
+						transform: `translateY(${x.start}px)`,
+					}}
+				>
+					{renderItem(data[x.index], x.index)}
+				</div>
+			))}
 		</div>
 	);
 
@@ -139,7 +162,12 @@ const InfiniteScroll = <Props,>({
 	);
 };
 
-export const InfiniteFetchList = <Data, _, HeaderProps, Kind extends number | string>({
+export const InfiniteFetchList = <
+	Data extends { id: string },
+	_,
+	HeaderProps,
+	Kind extends number | string,
+>({
 	query,
 	incremental = false,
 	placeholderCount = 2,
@@ -151,6 +179,7 @@ export const InfiniteFetchList = <Data, _, HeaderProps, Kind extends number | st
 	headerProps,
 	getItemType,
 	getItemSize,
+	fetchMore = true,
 	nested,
 	...props
 }: {
@@ -173,7 +202,7 @@ export const InfiniteFetchList = <Data, _, HeaderProps, Kind extends number | st
 	nested?: boolean;
 }): JSX.Element | null => {
 	const oldItems = useRef<Data[] | undefined>();
-	const { items, error, fetchNextPage, hasNextPage, isFetching } = query;
+	let { items, error, fetchNextPage, hasNextPage, isFetching } = query;
 	if (incremental && items) oldItems.current = items;
 
 	if (error) return addHeader(Header, <ErrorView error={error} />, headerProps);
@@ -182,29 +211,32 @@ export const InfiniteFetchList = <Data, _, HeaderProps, Kind extends number | st
 		return addHeader(Header, <EmptyView message={empty} />, headerProps);
 	}
 
+	if (incremental) items ??= oldItems.current;
+	const placeholders = [...Array(placeholderCount)].map(
+		(_, i) => ({ id: `gen${i}`, isLoading: true }) as unknown as Data,
+	);
 	return (
 		<InfiniteScroll
 			layout={layout}
 			loadMore={fetchNextPage}
-			hasMore={hasNextPage!}
+			hasMore={fetchMore && hasNextPage!}
 			isFetching={isFetching}
-			loader={[...Array(placeholderCount)].map((_, i) => (
-				<Fragment key={i.toString()}>
-					{Divider && i !== 0 && (Divider === true ? <HR /> : <Divider />)}
-					{children({ isLoading: true } as any, i)}
-				</Fragment>
-			))}
 			Header={Header}
 			headerProps={headerProps}
-			{...props}
-		>
-			{(items ?? oldItems.current)?.map((item, i) => (
+			data={isFetching ? [...(items || []), ...placeholders] : items ?? []}
+			renderItem={(item, i) => (
 				<Fragment key={(item as any).id}>
 					{Divider && i !== 0 && (Divider === true ? <HR /> : <Divider />)}
 					{children({ ...item, isLoading: false } as any, i)}
 				</Fragment>
-			))}
-		</InfiniteScroll>
+			)}
+			getItemSize={(x, i) =>
+				getItemSize && getItemType
+					? getItemSize(getItemType({ isLoading: false, ...x }, i))
+					: layout.size
+			}
+			{...props}
+		/>
 	);
 };
 
