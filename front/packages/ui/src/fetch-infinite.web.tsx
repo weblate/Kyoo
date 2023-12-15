@@ -32,6 +32,7 @@ import {
 } from "react";
 import { Stylable, nativeStyleToCss, useYoshiki, ysMap } from "yoshiki";
 import { EmptyView, ErrorView, Layout, WithLoading, addHeader } from "./fetch";
+import { Grid } from "./grid.web";
 import type { ContentStyle } from "@shopify/flash-list";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -60,6 +61,12 @@ const InfiniteScroll = <T extends { id: string }, Props>({
 	contentContainerStyle?: ContentStyle;
 	getItemSize: (x: T, idx: number) => number;
 } & Stylable) => {
+	return (
+		<Grid getItemSize={() => layout.size as any} data={data} layout={layout}>
+			{renderItem}
+		</Grid>
+	);
+
 	const ref = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const virtualizer = useVirtualizer({
