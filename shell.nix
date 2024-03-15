@@ -32,6 +32,7 @@ in
       eslint_d
       prettierd
       pgformatter
+      websocat
     ];
 
     DOTNET_ROOT = "${dotnet}";
