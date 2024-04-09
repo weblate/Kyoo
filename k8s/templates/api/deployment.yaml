@@ -18,5 +18,8 @@ spec:
           ports:
             - containerPort: 5000
               name: api-port
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.api.name }}-config"
       volumes:
         - name: thumbnails-vol

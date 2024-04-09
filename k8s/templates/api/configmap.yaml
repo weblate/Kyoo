@@ -3,4 +3,7 @@ kind: ConfigMap
 metadata:
   name: "{{ .Values.api.name }}-config"
 data:
-  default_permissions: {{ .Values.config.default_permissions }}
+  REQUIRE_ACCOUNT_VERIFICATION: {{ .Values.config.requireAccountVerification }}
+  UNLOGGED_PERMISSIONS: {{ .Values.config.unloggedPermissions }}
+  DEFAULT_PERMISSIONS: {{ .Values.config.defaultPermissions }}
+  PUBLIC_URL: {{ .Values.config.publicUrl }}

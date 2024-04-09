@@ -1,7 +1,21 @@
 tag: 3.4.0
 
 config:
-  default_permissions: ""
+  # If this is true, new accounts wont have any permissions before you approve them in your admin dashboard.
+  requireAccountVerification: true
+
+  # Specify permissions of guest accounts, default is no permissions.
+  # but you can allow anyone to use your instance without account by doing:
+  # unloggedPermissions: "overall.read,overall.play"
+  # You can specify this to allow guests users to see your collection without behing able to play videos for example:
+  # unlogged_permissions: "overall.read"
+  unloggedPermissions: ""
+
+  # Specify permissions of new accounts.
+  defaultPermissions: "overall.read,overall.play"
+
+  # The url you can use to reach your kyoo instance. This is used during oidc to redirect users to your instance.
+  publicUrl: "http://localhost:8901"
 
 api:
   name: api
