@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
   name: "{{ .Values.api.name }}-config"
 data:
-  REQUIRE_ACCOUNT_VERIFICATION: {{ .Values.config.requireAccountVerification }}
-  UNLOGGED_PERMISSIONS: {{ .Values.config.unloggedPermissions }}
-  DEFAULT_PERMISSIONS: {{ .Values.config.defaultPermissions }}
   PUBLIC_URL: {{ .Values.config.publicUrl }}
+  REQUIRE_ACCOUNT_VERIFICATION: {{ .Values.config.auth.requireAccountVerification }}
+  UNLOGGED_PERMISSIONS: {{ .Values.config.auth.unloggedPermissions }}
+  DEFAULT_PERMISSIONS: {{ .Values.config.auth.defaultPermissions }}
+  # TODO: oidc

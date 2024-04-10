@@ -1,0 +1,24 @@
+apiVersion: 1
+kind: Deployment
+metadata:
+  name: "{{ .Values.scanner.name }}-deployment"
+  namespace: {{ .Release.Namespace }}
+spec:
+  replica: 1
+  selector:
+    matchLabels:
+      app: scanner
+  template:
+    metadata:
+      labels:
+        app: scanner
+{{- with .Values.scanner.labels }}
+{{ toYaml . | indent 6 }}
+{{- end }}
+    spec:
+      containers:
+        - name: scanner
+          image: "{{ .Values.scanner.image }}:{{ .Values.tag }}"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.scanner.name }}-config"

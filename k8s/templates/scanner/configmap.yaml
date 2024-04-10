@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.scanner.name }}-config"
+data:
+  KYOO_URL: https://api/
+  LIBRARY_ROOT: {{ .Values.config.library.path }}
+  LIBRARY_IGNORE_PATTERN: {{ .Values.config.library.ignorePatern }}
+  THEMOVIEDB_APIKEY: {{ .Values.config.theMovieDbApiKey }}
+  # TODO: api key

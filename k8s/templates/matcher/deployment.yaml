@@ -1,0 +1,25 @@
+apiVersion: 1
+kind: Deployment
+metadata:
+  name: "{{ .Values.matcher.name }}-deployment"
+  namespace: {{ .Release.Namespace }}
+spec:
+  replica: {{ .Values.matcher.replica }}
+  selector:
+    matchLabels:
+      app: matcher
+  template:
+    metadata:
+      labels:
+        app: matcher
+{{- with .Values.matcher.labels }}
+{{ toYaml . | indent 6 }}
+{{- end }}
+    spec:
+      containers:
+        - name: matcher
+          image: "{{ .Values.matcher.image }}:{{ .Values.tag }}"
+          args: [ {{ .Values.matcher.command }} ]
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.matcher.name }}-config"

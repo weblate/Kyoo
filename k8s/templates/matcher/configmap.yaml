@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.matcher.name }}-config"
+data:
+  KYOO_URL: https://api/
+  LIBRARY_LANGUAGES: {{ .Values.config.library.languages }}
+  # TODO: api key
