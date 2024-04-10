@@ -1,0 +1,24 @@
+apiVersion: 1
+kind: Deployment
+metadata:
+  name: "{{ .Values.autosync.name }}-deployment"
+  namespace: {{ .Release.Namespace }}
+spec:
+  replica: {{ .Values.autosync.replica }}
+  selector:
+    matchLabels:
+      app: autosync
+  template:
+    metadata:
+      labels:
+        app: autosync
+{{- with .Values.autosync.labels }}
+{{ toYaml . | indent 6 }}
+{{- end }}
+    spec:
+      containers:
+        - name: autosync
+          image: "{{ .Values.autosync.image }}:{{ .Values.tag }}"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.autosync.name }}-config"

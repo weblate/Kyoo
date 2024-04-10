@@ -68,3 +68,15 @@ matcher:
   command: matcher
   replica: 1
   labels: {}
+
+autosync:
+  name: autosync
+  image: zoriya/kyoo_autosync
+  replica: 1
+  labels: {}
+
+transcoder:
+  name: transcoder
+  image: zoriya/kyoo_transcoder
+  replica: 1
+  labels: {}

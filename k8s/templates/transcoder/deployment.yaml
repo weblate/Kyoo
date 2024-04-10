@@ -1,0 +1,29 @@
+apiVersion: 1
+kind: Deployment
+metadata:
+  name: "{{ .Values.transcoder.name }}-deployment"
+  namespace: {{ .Release.Namespace }}
+spec:
+  replica: {{ .Values.transcoder.replica }}
+  selector:
+    matchLabels:
+      app: transcoder
+  template:
+    metadata:
+      labels:
+        app: transcoder
+{{- with .Values.transcoder.labels }}
+{{ toYaml . | indent 6 }}
+{{- end }}
+    spec:
+      containers:
+        - name: transcoder
+          image: "{{ .Values.transcoder.image }}:{{ .Values.tag }}"
+          ports:
+            - containerPort: 7666
+              name: "{{ .Values.transcoder.name }}-port"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.transcoder.name }}-config"
+      volumes:
+        - name: library-vol

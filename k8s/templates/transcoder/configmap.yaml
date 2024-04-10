@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.transcoder.name }}-config"
+data:
+  GOCODER_PRESET: {{ .Values.config.transcoder.preset }}
+  # TODO: hwaccel

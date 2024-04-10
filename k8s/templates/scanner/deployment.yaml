@@ -22,3 +22,5 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.scanner.name }}-config"
+      volumes:
+        - name: library-vol

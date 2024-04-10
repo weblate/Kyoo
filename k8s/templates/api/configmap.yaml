@@ -7,4 +7,5 @@ data:
   REQUIRE_ACCOUNT_VERIFICATION: {{ .Values.config.auth.requireAccountVerification }}
   UNLOGGED_PERMISSIONS: {{ .Values.config.auth.unloggedPermissions }}
   DEFAULT_PERMISSIONS: {{ .Values.config.auth.defaultPermissions }}
+  TRANSCODER_URL: https://transcoder
   # TODO: oidc

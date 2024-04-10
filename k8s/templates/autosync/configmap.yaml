@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.autosync.name }}-config"
+data:
+  # TODO: simkl api key
