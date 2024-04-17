@@ -91,3 +91,8 @@ postgresql:
   volumePermissions:
     enabled: true
   image.tag: "15"
+
+meilisearch:
+  environment.MEILI_ENV: "production"
+  image.tag: "1.4"
+
