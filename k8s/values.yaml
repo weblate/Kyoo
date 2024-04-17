@@ -80,3 +80,14 @@ transcoder:
   image: zoriya/kyoo_transcoder
   replica: 1
   labels: {}
+
+postgresql:
+  metrics:
+    enabled: false
+  auth:
+    username: kyoo
+    password: kyooPassword
+    database: kyoo_db
+  volumePermissions:
+    enabled: true
+  image.tag: "15"
