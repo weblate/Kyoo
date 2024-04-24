@@ -82,6 +82,7 @@ transcoder:
   labels: {}
 
 postgresql:
+  name: potsgresql
   metrics:
     enabled: false
   auth:
@@ -93,6 +94,13 @@ postgresql:
   image.tag: "15"
 
 meilisearch:
+  name: meilisearch
   environment.MEILI_ENV: "production"
   image.tag: "1.4"
 
+rabbitmq:
+  name: rabbitmq
+  image.tag: 3
+  auth:
+    username: kyoo
+    password: pass

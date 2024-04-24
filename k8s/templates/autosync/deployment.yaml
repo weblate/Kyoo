@@ -22,3 +22,5 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.autosync.name }}-config"
+            - configMapRef:
+                name: "{{ .Values.rabbitmq.name }}-config"

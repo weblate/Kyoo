@@ -9,10 +9,4 @@ data:
   DEFAULT_PERMISSIONS: {{ .Values.config.auth.defaultPermissions }}
   TRANSCODER_URL: https://transcoder
 
-  POSTGRES_USER: {{ .Values.postgresql.auth.username }}
-  POSTGRES_PASSWORD: {{ .Values.postgresql.auth.password }}
-  POSTGRES_DB: {{ .Values.postgresql.auth.database }}
-  POSTGRES_SERVER: postgres
-  POSTGRES_PORT: 5432
-
   # TODO: oidc

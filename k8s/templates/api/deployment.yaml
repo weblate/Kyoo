@@ -25,5 +25,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.api.name }}-config"
+            - configMapRef:
+                name: "{{ .Values.postgresql.name }}-config"
+            - configMapRef:
+                name: "{{ .Values.meilisearch.name }}-config"
+            - configMapRef:
+                name: "{{ .Values.rabbitmq.name }}-config"
       volumes:
         - name: thumbnails-vol

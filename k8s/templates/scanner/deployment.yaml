@@ -22,5 +22,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.scanner.name }}-config"
+            - configMapRef:
+                name: "{{ .Values.rabbitmq.name }}-config"
       volumes:
         - name: library-vol
