@@ -47,6 +47,10 @@ api:
   image: zoriya/kyoo_back
   replica: 1
   labels: {}
+  migrations:
+    name: migrations
+    image: zoriya/kyoo_migrations
+    backoffLimit: 4
 
 front:
   name: front

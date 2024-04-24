@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Values.api.migrations.name }}-job"
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: "{{ .Values.api.migrations.image }}:{{ .Values.tag }}"
+        envFrom:
+          - configMapRef:
+              name: "{{ .Values.postgresql.name }}-config"
+      restartPolicy: Never
+  backoffLimit: {{ .Values.api.migrations.backoffLimit }}
+
