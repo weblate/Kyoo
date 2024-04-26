@@ -2,7 +2,7 @@ import asyncio
 from aiohttp import ClientSession
 from datetime import datetime, timedelta
 from logging import getLogger
-from typing import Awaitable, Callable, Dict, List, Optional, Any, TypeVar
+from typing import cast, Awaitable, Callable, Dict, List, Optional, Any, TypeVar
 from itertools import accumulate, zip_longest
 
 from providers.utils import ProviderError
@@ -595,7 +595,9 @@ class TheMovieDatabase(Provider):
 		show = await self.identify_show(show_id)
 		# Dont forget to ingore the special season (season_number 0)
 		seasons_nbrs = [x.season_number for x in show.seasons if x.season_number != 0]
-		seasons_eps = [x.episodes_count for x in show.seasons if x.season_number != 0]
+		seasons_eps = [
+			cast(int, x.episodes_count) for x in show.seasons if x.season_number != 0
+		]
 
 		if not any(seasons_nbrs):
 			return (None, None)
@@ -623,7 +625,7 @@ class TheMovieDatabase(Provider):
 			show = await self.identify_show(show_id)
 			return (
 				sum(
-					x.episodes_count
+					cast(int, x.episodes_count)
 					for x in show.seasons
 					if 0 < x.season_number < season
 				)
