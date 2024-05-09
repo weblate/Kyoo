@@ -37,7 +37,7 @@ class Show:
 	start_air: Optional[date | int]
 	end_air: Optional[date | int]
 	status: Status
-	rating: int
+	rating: Optional[int]
 	studios: list[Studio]
 	genres: list[Genre]
 	seasons: list[Season]
@@ -55,6 +55,7 @@ class Show:
 		return {
 			**asdict(self),
 			**asdict(self.translations[default_language]),
+			"rating": self.rating or 0,
 			"studio": next((x.to_kyoo() for x in self.studios), None),
 			"seasons": None,
 			"poster": select_image(self, "posters"),
